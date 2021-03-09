@@ -17,6 +17,7 @@ const _ = {
         {key: 'wallet', value: null},
         {key: 'network', value: 1},
       ]);
+
       await db.network.bulkAdd([
         {
           id: 1,
@@ -39,6 +40,19 @@ const _ = {
           },
           account: {balance: null, codeHash: null},
         },
+        {
+          id: 3,
+          server: 'http://localhost:3333',
+          explorer: 'net.ton.live',
+          info: 'SVOI.dev Local',
+          isDev: true,
+          faucet: {
+            address: '0:553b3ea098c3bae9a60d9b689beb183c3cf9a5e6bc5f20acf34d5edfa49a31c1',
+            isGettingTokens: false,
+            isAvailable: true,
+          },
+          account: {balance: null, codeHash: null},
+        },
       ]);
     });
   },
@@ -48,6 +62,7 @@ export default {
   getClient: async function () {
     const isInited = await Dexie.exists(DB_NAME);
     const db = new Dexie(DB_NAME);
+    window.db = db;
     _.setSchema(db);
     await db.open();
     if (!isInited) {

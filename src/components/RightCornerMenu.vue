@@ -10,7 +10,8 @@
         <v-list-item v-for="(item, id) in wallets" :key="id" two-line>
           <v-list-item-content>
             <v-list-item-title>{{ item.name }}</v-list-item-title>
-            <v-list-item-subtitle class="text-overline">{{ walletLib.addressToView(item.address) }}</v-list-item-subtitle>
+            <v-list-item-subtitle class="text-overline">{{ walletLib.addressToView(item.address) }}
+            </v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
             <v-btn @click="startEditing({wallets, wallet: item})" icon>
@@ -40,6 +41,17 @@
 
       <v-divider/>
 
+      <v-list-item @click="addNetwork">
+        <v-list-item-icon>
+          <v-icon>mdi-information</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Add network</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider/>
+
       <v-list-item @click="logout">
         <v-list-item-icon>
           <v-icon>mdi-exit-run</v-icon>
@@ -56,6 +68,7 @@
 import {mapActions, mapState, mapMutations} from "vuex";
 import walletLib from "@/lib/wallet";
 import AddWalletDialog from "@/components/AddWalletDialog";
+import {default as database} from "@/db/index.js";
 
 export default {
   components: {AddWalletDialog},
@@ -72,7 +85,7 @@ export default {
   },
   watch: {
     walletId(val) {
-      if (null !== val) {
+      if(null !== val) {
         this.setWalletModel();
       }
     },
@@ -93,12 +106,39 @@ export default {
       // eslint-disable-next-line no-unused-vars
       for (const [id, wallet] of Object.entries(this.wallets)) {
         i++;
-        if (id - 0 === this.walletId) {
+        if(id - 0 === this.walletId) {
           this.walletKey = i;
         }
       }
     },
+    async addNetwork() {
+      (await database.getClient()).network.add({
+        id: Math.random(),
+        server: prompt('Server address'),
+        explorer: 'ton.live',
+        info: prompt('Server name'),
+        isDev: true,
+        account: {balance: null, codeHash: null},
+      });
+
+      window.location.reload();
+    }
   },
+}
+
+
+window.addNetwork = async function () {
+
+  (await database.getClient()).network.add({
+    id: Math.random(),
+    server: prompt('Server address'),
+    explorer: 'ton.live',
+    info: prompt('Server name'),
+    isDev: true,
+    account: {balance: null, codeHash: null},
+  });
+
+  window.location.reload();
 }
 </script>
 
