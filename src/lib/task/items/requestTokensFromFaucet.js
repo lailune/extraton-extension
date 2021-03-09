@@ -3,6 +3,7 @@ import database from "@/db";
 import {walletRepository} from "@/db/repository/walletRepository";
 
 const gruntAbi = require('@/contracts/Grunt.abi.json');
+const giverAbi = require('@/contracts/Giver.abi.json');
 
 export default {
   name: 'requestTokensFromFaucet',
@@ -15,8 +16,18 @@ export default {
 
     try {
       const wallet = await walletRepository.getCurrent();
-      await TonApi.run(net.server, net.faucet.address, 'grant', gruntAbi, {addr: wallet.address});
-      net.faucet.isAvailable = false;
+      try {
+        await TonApi.run(net.server, net.faucet.address, 'grant', gruntAbi, {addr: wallet.address});
+      }catch (e){
+        console.log(e);
+      }
+
+      try {
+        await TonApi.run(net.server, net.faucet.address, 'sendGrams', giverAbi, {dest: wallet.address, amount:  99 * Math.pow(10, 9)});
+      }catch (e){
+        console.log(e);
+      }
+      //net.faucet.isAvailable = false;
     } finally {
       net.faucet.isGettingTokens = false;
       await db.network.update(network, {faucet: net.faucet});

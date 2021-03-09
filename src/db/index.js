@@ -47,7 +47,7 @@ const _ = {
           info: 'SVOI.dev Local',
           isDev: true,
           faucet: {
-            address: '0:553b3ea098c3bae9a60d9b689beb183c3cf9a5e6bc5f20acf34d5edfa49a31c1',
+            address: '0:841288ed3b55d9cdafa806807f02a0ae0c169aa5edfe88a789a6482429756a94',
             isGettingTokens: false,
             isAvailable: true,
           },
